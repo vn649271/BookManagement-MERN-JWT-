@@ -121,7 +121,7 @@ class Book extends Component {
       <div>
         {currentTutorial ? (
           <div className="edit-form">
-            <h4>Book</h4>
+            <h4>Book Detail</h4>
             <form>
               <div className="form-group">
                 <label htmlFor="title">Title</label>

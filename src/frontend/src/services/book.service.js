@@ -1,8 +1,12 @@
 import http from "../http-common";
 
 class BookManagementService {
-  getAll() {
-    return http.get("/books");
+  getAll(token) {
+    const config = {
+      headers: { "x-access-token": token },
+      "Content-type": "application/json",
+    };    
+    return http.get("/books", config);
   }
 
   get(id) {
@@ -10,7 +14,11 @@ class BookManagementService {
   }
 
   create(data) {
-    return http.post("/books", data);
+    const config = {
+      headers: { "x-access-token": data.token },
+      "Content-type": "application/json",
+    };    
+    return http.post("/books", data, config);
   }
 
   update(id, data) {

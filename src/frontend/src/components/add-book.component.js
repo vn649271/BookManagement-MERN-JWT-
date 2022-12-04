@@ -1,52 +1,34 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import BookManagementService from "../services/book.service";
 
-export default class AddBook extends Component {
-  constructor(props) {
-    super(props);
-    this.onChangeTitle = this.onChangeTitle.bind(this);
-    this.onChangeDescription = this.onChangeDescription.bind(this);
-    this.saveTutorial = this.saveTutorial.bind(this);
-    this.newTutorial = this.newTutorial.bind(this);
+const AddBook = props => {
 
-    this.state = {
-      id: null,
-      title: "",
-      description: "", 
-      published: false,
+  const {userId, username, token} = props;
 
-      submitted: false
-    };
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [published, setPublished] = useState("");
+  const [submitted, setSubmitted] = useState("");
+
+  const onChangeTitle = e => {
+    setTitle(e.target.value)
   }
-
-  onChangeTitle(e) {
-    this.setState({
-      title: e.target.value
-    });
+  const onChangeDescription = e => {
+    setDescription(e.target.value)
   }
-
-  onChangeDescription(e) {
-    this.setState({
-      description: e.target.value
-    });
-  }
-
-  saveTutorial() {
-    var data = {
-      title: this.state.title,
-      description: this.state.description
-    };
+  const saveBook = () => {
+    var data = {title, description, token};
 
     BookManagementService.create(data)
       .then(response => {
-        this.setState({
-          id: response.data.id,
-          title: response.data.title,
-          description: response.data.description,
-          published: response.data.published,
-
-          submitted: true
-        });
+        if (response.data.error) {
+          alert(response.data.message);
+          return;
+        }
+        setTitle(response.data.title)
+        setDescription(response.data.description)
+        setPublished(response.data.published);
+        setSubmitted(true);
         console.log(response.data);
       })
       .catch(e => {
@@ -54,61 +36,57 @@ export default class AddBook extends Component {
       });
   }
 
-  newTutorial() {
-    this.setState({
-      id: null,
-      title: "",
-      description: "",
-      published: false,
-
-      submitted: false
-    });
+  const newBook = () => {
+    setTitle("");
+    setDescription("");
+    setPublished(false);
+    setSubmitted(false);
   }
 
-  render() {
-    return (
-      <div className="submit-form">
-        {this.state.submitted ? (
-          <div>
-            <h4>You submitted successfully!</h4>
-            <button className="btn btn-success" onClick={this.newTutorial}>
-              Add
-            </button>
+  return (
+    <div className="submit-form">
+      {submitted ? (
+        <div>
+          <h4>You submitted successfully!</h4>
+          <button className="btn btn-success" onClick={newBook}>
+            Add
+          </button>
+        </div>
+      ) : (
+        <div>
+          <div className="form-group">
+            <label htmlFor="title">Title</label>
+            <input
+              type="text"
+              className="form-control"
+              id="title"
+              required
+              value={title}
+              onChange={onChangeTitle}
+              name="title"
+            />
           </div>
-        ) : (
-          <div>
-            <div className="form-group">
-              <label htmlFor="title">Title</label>
-              <input
-                type="text"
-                className="form-control"
-                id="title"
-                required
-                value={this.state.title}
-                onChange={this.onChangeTitle}
-                name="title"
-              />
-            </div>
 
-            <div className="form-group">
-              <label htmlFor="description">Description</label>
-              <input
-                type="text"
-                className="form-control"
-                id="description"
-                required
-                value={this.state.description}
-                onChange={this.onChangeDescription}
-                name="description"
-              />
-            </div>
-
-            <button onClick={this.saveTutorial} className="btn btn-success">
-              Submit
-            </button>
+          <div className="form-group">
+            <label htmlFor="description">Description</label>
+            <input
+              type="text"
+              className="form-control"
+              id="description"
+              required
+              value={description}
+              onChange={onChangeDescription}
+              name="description"
+            />
           </div>
-        )}
-      </div>
-    );
-  }
+
+          <button onClick={saveBook} className="btn btn-success">
+            Submit
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
+
+export default AddBook

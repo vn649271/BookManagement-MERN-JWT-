@@ -6,6 +6,16 @@ const Role = db.role;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
+var salt = "";
+
+exports.getSalt = (req, res) => {
+    salt = bcrypt.genSaltSync(10);
+    res.status(200).send({ 
+        error: 0,
+        data: { salt }
+    })
+}
+
 exports.signup = (req, res) => {
     const user = new User({
         username: req.body.username,
@@ -16,6 +26,7 @@ exports.signup = (req, res) => {
     user.save((err, user) => {
         if (err) {
             res.status(500).send({
+                error: 1,
                 message: err
             });
             return;
@@ -30,6 +41,7 @@ exports.signup = (req, res) => {
                 (err, roles) => {
                     if (err) {
                         res.status(500).send({
+                            error: 2,
                             message: err
                         });
                         return;
@@ -39,6 +51,7 @@ exports.signup = (req, res) => {
                     user.save(err => {
                         if (err) {
                             res.status(500).send({
+                                error: 3,
                                 message: err
                             });
                             return;
@@ -56,6 +69,7 @@ exports.signup = (req, res) => {
             }, (err, role) => {
                 if (err) {
                     res.status(500).send({
+                        error: 4,
                         message: err
                     });
                     return;
@@ -65,6 +79,7 @@ exports.signup = (req, res) => {
                 user.save(err => {
                     if (err) {
                         res.status(500).send({
+                            error:5,
                             message: err
                         });
                         return;
@@ -81,30 +96,26 @@ exports.signup = (req, res) => {
 
 exports.signin = (req, res) => {
     User.findOne({
-            username: req.body.username
+            username: req.params.username
         })
-        .populate("roles", "-__v")
+        // .populate("roles", "-__v")
         .exec((err, user) => {
             if (err) {
                 res.status(500).send({
+                    error: 6,
                     message: err
                 });
                 return;
             }
-
             if (!user) {
                 return res.status(404).send({
-                    message: "User Not found."
+                    error: 7,
+                    message: "User Not found"
                 });
             }
-
-            var passwordIsValid = bcrypt.compareSync(
-                req.body.password,
-                user.password
-            );
-
-            if (!passwordIsValid) {
+            if (req.params.password != user.password) {
                 return res.status(401).send({
+                    error: 8,
                     accessToken: null,
                     message: "Invalid Password!"
                 });
@@ -122,11 +133,12 @@ exports.signin = (req, res) => {
                 authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
             }
             res.status(200).send({
-                id: user._id,
-                username: user.username,
-                email: user.email,
-                roles: authorities,
-                accessToken: token
+                error: 0,
+                data: {
+                    id: user._id,
+                    username: user.username,
+                    accessToken: token
+                }
             });
         });
 };

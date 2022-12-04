@@ -1,43 +1,25 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import BookManagementService from "../services/book.service";
 import { Link } from "react-router-dom";
 
-export default class BookList extends Component {
-  constructor(props) {
-    super(props);
-    this.onChangeSearchTitle = this.onChangeSearchTitle.bind(this);
-    this.retrieveTutorials = this.retrieveTutorials.bind(this);
-    this.refreshList = this.refreshList.bind(this);
-    this.setActiveTutorial = this.setActiveTutorial.bind(this);
-    this.removeAllTutorials = this.removeAllTutorials.bind(this);
-    this.searchTitle = this.searchTitle.bind(this);
+const BookList = props => {
+  const { token } = props;
+  const [books, setBooks] = useState([]);
+  const [currentBook, setCurrentBook] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(-1);
 
-    this.state = {
-      tutorials: [],
-      currentTutorial: null,
-      currentIndex: -1,
-      searchTitle: ""
-    };
-  }
+  useEffect(() => {
+    retrieveBooks();
+  });
 
-  componentDidMount() {
-    this.retrieveTutorials();
-  }
-
-  onChangeSearchTitle(e) {
-    const searchTitle = e.target.value;
-
-    this.setState({
-      searchTitle: searchTitle
-    });
-  }
-
-  retrieveTutorials() {
-    BookManagementService.getAll()
+  const retrieveBooks = () => {
+    BookManagementService.getAll(token)
       .then(response => {
-        this.setState({
-          tutorials: response.data
-        });
+        if (response.data.error) {
+          alert("Failed to get book list");
+          return;
+        }
+        setBooks(response.data.books);
         console.log(response.data);
       })
       .catch(e => {
@@ -45,139 +27,94 @@ export default class BookList extends Component {
       });
   }
 
-  refreshList() {
-    this.retrieveTutorials();
-    this.setState({
-      currentTutorial: null,
-      currentIndex: -1
-    });
+  const refreshList = () => {
+    retrieveBooks();
+    setCurrentBook(null);
+    setCurrentIndex(-1);
   }
 
-  setActiveTutorial(tutorial, index) {
-    this.setState({
-      currentTutorial: tutorial,
-      currentIndex: index
-    });
+  const setActiveBook = (book, index) => {
+    setCurrentBook(book);
+    setCurrentIndex(index);
   }
 
-  removeAllTutorials() {
+  const removeAllBooks = () => {
     BookManagementService.deleteAll()
       .then(response => {
         console.log(response.data);
-        this.refreshList();
+        refreshList();
       })
       .catch(e => {
         console.log(e);
       });
   }
 
-  searchTitle() {
-    this.setState({
-      currentTutorial: null,
-      currentIndex: -1
-    });
-
-    BookManagementService.findByTitle(this.state.searchTitle)
-      .then(response => {
-        this.setState({
-          tutorials: response.data
-        });
-        console.log(response.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  }
-
-  render() {
-    const { searchTitle, tutorials, currentTutorial, currentIndex } = this.state;
-
-    return (
-      <div className="list row">
-        <div className="col-md-8">
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search by title"
-              value={searchTitle}
-              onChange={this.onChangeSearchTitle}
-            />
-            <div className="input-group-append">
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={this.searchTitle}
+  return (
+    <div className="list row">
+      <div className="col-md-6">
+        <h4>Book List</h4>
+        <ul className="list-group">
+          {books &&
+            books.map((book, index) => (
+              <li
+                className={
+                  "list-group-item " +
+                  (index === currentIndex ? "active" : "")
+                }
+                onClick={() => setActiveBook(book, index)}
+                key={index}
               >
-                Search
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-6">
-          <h4>Tutorials List</h4>
+                {book.title}
+              </li>
+            ))}
+        </ul>
 
-          <ul className="list-group">
-            {tutorials &&
-              tutorials.map((tutorial, index) => (
-                <li
-                  className={
-                    "list-group-item " +
-                    (index === currentIndex ? "active" : "")
-                  }
-                  onClick={() => this.setActiveTutorial(tutorial, index)}
-                  key={index}
-                >
-                  {tutorial.title}
-                </li>
-              ))}
-          </ul>
-
-          <button
-            className="m-3 btn btn-sm btn-danger"
-            onClick={this.removeAllTutorials}
-          >
-            Remove All
-          </button>
-        </div>
-        <div className="col-md-6">
-          {currentTutorial ? (
-            <div>
-              <h4>Tutorial</h4>
-              <div>
-                <label>
-                  <strong>Title:</strong>
-                </label>{" "}
-                {currentTutorial.title}
-              </div>
-              <div>
-                <label>
-                  <strong>Description:</strong>
-                </label>{" "}
-                {currentTutorial.description}
-              </div>
-              <div>
-                <label>
-                  <strong>Status:</strong>
-                </label>{" "}
-                {currentTutorial.published ? "Published" : "Pending"}
-              </div>
-
-              <Link
-                to={"/tutorials/" + currentTutorial.id}
-                className="badge badge-warning"
-              >
-                Edit
-              </Link>
-            </div>
-          ) : (
-            <div>
-              <br />
-              <p>Please click on a Tutorial...</p>
-            </div>
-          )}
-        </div>
+        <button
+          className="m-3 btn btn-sm btn-danger"
+          onClick={removeAllBooks}
+        >
+          Remove All
+        </button>
       </div>
-    );
-  }
+      <div className="col-md-6">
+        {currentBook ? (
+          <div>
+            <h4>Book</h4>
+            <div>
+              <label>
+                <strong>Title:</strong>
+              </label>{" "}
+              {currentBook.title}
+            </div>
+            <div>
+              <label>
+                <strong>Description:</strong>
+              </label>{" "}
+              {currentBook.description}
+            </div>
+            <div>
+              <label>
+                <strong>Status:</strong>
+              </label>{" "}
+              {currentBook.published ? "Published" : "Pending"}
+            </div>
+
+            <Link
+              to={"/books/" + currentBook.id}
+              className="badge badge-warning"
+            >
+              Edit
+            </Link>
+          </div>
+        ) : (
+          <div>
+            <br />
+            <p>Please click on a Book...</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
+
+export default BookList;

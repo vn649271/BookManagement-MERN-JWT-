@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const dbConfig = require("./db.config");
+require('dotenv').config();
+const PORT = process.env.PORT || 8085;
 
 const app = express();
 
@@ -19,7 +21,7 @@ app.use(express.urlencoded({
 }));
 
 const db = require("./app/models");
-const Role = db.role;
+const User = db.user;
 
 db.mongoose
   .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
@@ -36,10 +38,13 @@ db.mongoose
   });
 
 function initial() {
-  Role.count((err, count) => {
-    if (!err && count === 0) {
-      new Role({
-        name: "CREATOR"
+  User.count((err, count) => {
+    if (!err && count < 1) {
+      new User({
+        username: 'aa',
+        password: 'aaaa',
+        email: 'aa@aa.aa',
+        roles: 1
       }).save(err => {
         if (err) {
           console.log("error", err);
@@ -47,8 +52,11 @@ function initial() {
         console.log("added 'CREATOR' to roles collection");
       });
 
-      new Role({
-        name: "VIEWER"
+      new User({
+        username: 'bb',
+        email: 'bb@bb.bb',
+        password: 'bbbb',
+        roles: 2
       }).save(err => {
         if (err) {
           console.log("error", err);
@@ -56,8 +64,11 @@ function initial() {
         console.log("added 'VIEWER' to roles collection");
       });
 
-      new Role({
-        name: "VIEW_ALL"
+      new User({
+        username: 'cc',
+        email: 'cc@cc.cc',
+        password: 'cccc',
+        roles: 3
       }).save(err => {
         if (err) {
           console.log("error", err);
@@ -68,18 +79,11 @@ function initial() {
   });
 }
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({
-    message: "Welcome to bezkoder application."
-  });
-});
-
 require('./app/routes/auth.routes')(app);
+require('./app/routes/book.routes')(app);
 require('./app/routes/user.routes')(app);
 
 // set port, listen for requests
-const PORT = process.env.PORT || 8082;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
