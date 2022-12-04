@@ -14,5 +14,6 @@ module.exports = function (app) {
 
     app.post("/books", [authJwt.verifyToken], controller.registerBook);
     app.get("/books", [authJwt.verifyToken], controller.getBooks);
+    app.get("/books/:bookId", [authJwt.verifyToken], controller.getBook);
     app.post("/books/delete", [authJwt.verifyToken], controller.deleteBook);
 };

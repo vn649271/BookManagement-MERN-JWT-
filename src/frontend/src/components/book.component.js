@@ -24,7 +24,7 @@ class Book extends Component {
   }
 
   componentDidMount() {
-    this.getBook(this.props.router.params.id);
+    this.getBook(this.props.router.params.id, this.props.token);
   }
 
   onChangeTitle(e) {
@@ -51,11 +51,11 @@ class Book extends Component {
     }));
   }
 
-  getBook(id) {
-    BookManagementService.get(id)
+  getBook(bookId, token) {
+    BookManagementService.get(bookId, token)
       .then(response => {
         this.setState({
-          currentBook: response.data
+          currentBook: response.data.books[0]
         });
         console.log(response.data);
       })
@@ -146,9 +146,9 @@ class Book extends Component {
 
               <div className="form-group">
                 <label>
-                  <strong>Status:</strong>
+                  <strong>Status:&nbsp;</strong>
                 </label>
-                {currentBook.published ? "Published" : "Pending"}
+                {currentBook.published_at ? "Published" : "Pending"}
               </div>
             </form>
 

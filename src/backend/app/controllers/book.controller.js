@@ -8,7 +8,9 @@ const Book = db.book;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
-const { ObjectId } = require("mongoose/lib/types");
+const {
+    ObjectId
+} = require("mongoose/lib/types");
 
 exports.registerBook = (req, res) => {
     let userId = req.userId;
@@ -84,15 +86,75 @@ exports.getBooks = (req, res) => {
                     message: "No right to browse book list"
                 });
             }
-            if (user.roles === ROLES.CREATOR || 
-                    user.roles === ROLES.VIEWER) {
-                filter = {author: user.id};
+            if (user.roles === ROLES.CREATOR ||
+                user.roles === ROLES.VIEWER) {
+                filter = {
+                    author: user.id
+                };
             }
             Book.find(filter).then((ret) => {
                 if (ret.length < 1) {
                     return res.status(200).send({
                         error: 2,
                         message: "Failed to create book"
+                    });
+                }
+                res.status(200).send({
+                    error: 0,
+                    books: ret
+                });
+            });
+        });
+};
+
+exports.getBook = (req, res) => {
+    let userId = req.userId;
+    User.findOne({
+            _id: ObjectId(userId)
+        })
+        .exec((err, user) => {
+            if (err) {
+                res.status(500).send({
+                    error: 6,
+                    message: err
+                });
+                return;
+            }
+            if (!user) {
+                return res.status(404).send({
+                    error: 7,
+                    message: "User Not found"
+                });
+            }
+            let filter = {};
+            if (req.params.bookId) {
+                filter = {
+                    _id: ObjectId(req.params.bookId)
+                };
+            }
+            if (user.roles === ROLES.NONE) {
+                return res.status(200).send({
+                    error: 8,
+                    message: "No right to browse book list"
+                });
+            }
+            if (user.roles === ROLES.CREATOR ||
+                user.roles === ROLES.VIEWER) {
+                filter = {
+                    author: user.id
+                };
+                if (req.params.bookId) {
+                    filter = {
+                        _id: ObjectId(req.params.bookId),
+                        author: user.id
+                    };
+                }
+            }
+            Book.find(filter).then((ret) => {
+                if (ret.length < 1) {
+                    return res.status(200).send({
+                        error: 2,
+                        message: "No book data"
                     });
                 }
                 res.status(200).send({

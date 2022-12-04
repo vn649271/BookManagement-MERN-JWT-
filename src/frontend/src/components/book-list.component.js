@@ -93,7 +93,7 @@ const BookList = props => {
             </div>
 
             <Link
-              to={"/books/" + books[currentIndex.replace("book_", "") - 0].id}
+              to={"/books/" + books[currentIndex.replace("book_", "") - 0]._id}
               className="badge badge-warning"
             >
               Edit

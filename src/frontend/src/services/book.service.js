@@ -9,8 +9,12 @@ class BookManagementService {
     return http.get("/books", config);
   }
 
-  get(id) {
-    return http.get(`/books/${id}`);
+  get(id, token) {
+    const config = {
+      headers: { "x-access-token": token },
+      "Content-type": "application/json",
+    };    
+    return http.get(`/books/${id}`, config);
   }
 
   create(data) {
