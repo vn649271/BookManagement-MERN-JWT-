@@ -5,12 +5,12 @@ import { Link } from "react-router-dom";
 const BookList = props => {
   const { token } = props;
   const [books, setBooks] = useState([]);
-  const [currentBook, setCurrentBook] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(-1);
+  const [currentIndex, setCurrentIndex] = useState("");
+  const [currentClassName, setCurrentClassName] = useState("list-group-item");
 
   useEffect(() => {
     retrieveBooks();
-  });
+  }, [books]);
 
   const retrieveBooks = () => {
     BookManagementService.getAll(token)
@@ -20,24 +20,19 @@ const BookList = props => {
           return;
         }
         setBooks(response.data.books);
-        console.log(response.data);
       })
       .catch(e => {
         console.log(e);
       });
   }
-
   const refreshList = () => {
     retrieveBooks();
-    setCurrentBook(null);
-    setCurrentIndex(-1);
+    setCurrentIndex("");
   }
-
-  const setActiveBook = (book, index) => {
-    setCurrentBook(book);
-    setCurrentIndex(index);
+  const onSelectBook = ev => {
+    console.log(ev.target.id)
+    setCurrentIndex(ev.target.id);
   }
-
   const removeAllBooks = () => {
     BookManagementService.deleteAll()
       .then(response => {
@@ -57,11 +52,9 @@ const BookList = props => {
           {books &&
             books.map((book, index) => (
               <li
-                className={
-                  "list-group-item " +
-                  (index === currentIndex ? "active" : "")
-                }
-                onClick={() => setActiveBook(book, index)}
+                id={"book_" + index}
+                className={'list-group-item' + `${currentIndex === 'book_' + index ? ' active' : ''}`}
+                onClick={onSelectBook}
                 key={index}
               >
                 {book.title}
@@ -76,45 +69,46 @@ const BookList = props => {
           Remove All
         </button>
       </div>
-      <div className="col-md-6">
-        {currentBook ? (
-          <div>
-            <h4>Book</h4>
-            <div>
-              <label>
-                <strong>Title:</strong>
-              </label>{" "}
-              {currentBook.title}
-            </div>
-            <div>
-              <label>
-                <strong>Description:</strong>
-              </label>{" "}
-              {currentBook.description}
-            </div>
-            <div>
-              <label>
-                <strong>Status:</strong>
-              </label>{" "}
-              {currentBook.published ? "Published" : "Pending"}
-            </div>
 
-            <Link
-              to={"/books/" + currentBook.id}
-              className="badge badge-warning"
-            >
-              Edit
-            </Link>
-          </div>
-        ) : (
-          <div>
-            <br />
-            <p>Please click on a Book...</p>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
 
+      // <div className="col-md-6">
+      //   {currentIndex !== ""? (
+      //     <div>
+      //       <h4>Book</h4>
+      //       <div>
+      //         <label>
+      //           <strong>Title:</strong>
+      //         </label>{" "}
+      //         {books[currentIndex.replace("book_", "") - 0].title}
+      //       </div>
+      //       <div>
+      //         <label>
+      //           <strong>Description:</strong>
+      //         </label>{" "}
+      //         {books[currentIndex.replace("book_", "") - 0].description}
+      //       </div>
+      //       <div>
+      //         <label>
+      //           <strong>Status:</strong>
+      //         </label>{" "}
+      //         {books[currentIndex.replace("book_", "") - 0].published_at ? "Published" : "Pending"}
+      //       </div>
+
+      //       <Link
+      //         to={"/books/" + books[currentIndex.replace("book_", "") - 0].id}
+      //         className="badge badge-warning"
+      //       >
+      //         Edit
+      //       </Link>
+      //     </div>
+      //   ) : (
+      //     <div>
+      //       <br />
+      //       <p>Please click on a Book...</p>
+      //     </div>
+      //   )}
+      // </div>
 export default BookList;

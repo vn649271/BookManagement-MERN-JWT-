@@ -7,13 +7,13 @@ class Book extends Component {
     super(props);
     this.onChangeTitle = this.onChangeTitle.bind(this);
     this.onChangeDescription = this.onChangeDescription.bind(this);
-    this.getTutorial = this.getTutorial.bind(this);
+    this.getBook = this.getBook.bind(this);
     this.updatePublished = this.updatePublished.bind(this);
-    this.updateTutorial = this.updateTutorial.bind(this);
-    this.deleteTutorial = this.deleteTutorial.bind(this);
+    this.updateBook = this.updateBook.bind(this);
+    this.deleteBook = this.deleteBook.bind(this);
 
     this.state = {
-      currentTutorial: {
+      currentBook: {
         id: null,
         title: "",
         description: "",
@@ -24,7 +24,7 @@ class Book extends Component {
   }
 
   componentDidMount() {
-    this.getTutorial(this.props.router.params.id);
+    this.getBook(this.props.router.params.id);
   }
 
   onChangeTitle(e) {
@@ -32,8 +32,8 @@ class Book extends Component {
 
     this.setState(function(prevState) {
       return {
-        currentTutorial: {
-          ...prevState.currentTutorial,
+        currentBook: {
+          ...prevState.currentBook,
           title: title
         }
       };
@@ -44,18 +44,18 @@ class Book extends Component {
     const description = e.target.value;
     
     this.setState(prevState => ({
-      currentTutorial: {
-        ...prevState.currentTutorial,
+      currentBook: {
+        ...prevState.currentBook,
         description: description
       }
     }));
   }
 
-  getTutorial(id) {
+  getBook(id) {
     BookManagementService.get(id)
       .then(response => {
         this.setState({
-          currentTutorial: response.data
+          currentBook: response.data
         });
         console.log(response.data);
       })
@@ -66,17 +66,17 @@ class Book extends Component {
 
   updatePublished(status) {
     var data = {
-      id: this.state.currentTutorial.id,
-      title: this.state.currentTutorial.title,
-      description: this.state.currentTutorial.description,
+      id: this.state.currentBook.id,
+      title: this.state.currentBook.title,
+      description: this.state.currentBook.description,
       published: status
     };
 
-    BookManagementService.update(this.state.currentTutorial.id, data)
+    BookManagementService.update(this.state.currentBook.id, data)
       .then(response => {
         this.setState(prevState => ({
-          currentTutorial: {
-            ...prevState.currentTutorial,
+          currentBook: {
+            ...prevState.currentBook,
             published: status
           }
         }));
@@ -87,15 +87,15 @@ class Book extends Component {
       });
   }
 
-  updateTutorial() {
+  updateBook() {
     BookManagementService.update(
-      this.state.currentTutorial.id,
-      this.state.currentTutorial
+      this.state.currentBook.id,
+      this.state.currentBook
     )
       .then(response => {
         console.log(response.data);
         this.setState({
-          message: "The tutorial was updated successfully!"
+          message: "The book was updated successfully!"
         });
       })
       .catch(e => {
@@ -103,11 +103,11 @@ class Book extends Component {
       });
   }
 
-  deleteTutorial() {    
-    BookManagementService.delete(this.state.currentTutorial.id)
+  deleteBook() {    
+    BookManagementService.delete(this.state.currentBook.id)
       .then(response => {
         console.log(response.data);
-        this.props.router.navigate('/tutorials');
+        this.props.router.navigate('/books');
       })
       .catch(e => {
         console.log(e);
@@ -115,11 +115,11 @@ class Book extends Component {
   }
 
   render() {
-    const { currentTutorial } = this.state;
+    const { currentBook } = this.state;
 
     return (
       <div>
-        {currentTutorial ? (
+        {currentBook ? (
           <div className="edit-form">
             <h4>Book Detail</h4>
             <form>
@@ -129,7 +129,7 @@ class Book extends Component {
                   type="text"
                   className="form-control"
                   id="title"
-                  value={currentTutorial.title}
+                  value={currentBook.title}
                   onChange={this.onChangeTitle}
                 />
               </div>
@@ -139,7 +139,7 @@ class Book extends Component {
                   type="text"
                   className="form-control"
                   id="description"
-                  value={currentTutorial.description}
+                  value={currentBook.description}
                   onChange={this.onChangeDescription}
                 />
               </div>
@@ -148,11 +148,11 @@ class Book extends Component {
                 <label>
                   <strong>Status:</strong>
                 </label>
-                {currentTutorial.published ? "Published" : "Pending"}
+                {currentBook.published ? "Published" : "Pending"}
               </div>
             </form>
 
-            {currentTutorial.published ? (
+            {currentBook.published ? (
               <button
                 className="badge badge-primary mr-2"
                 onClick={() => this.updatePublished(false)}
@@ -170,7 +170,7 @@ class Book extends Component {
 
             <button
               className="badge badge-danger mr-2"
-              onClick={this.deleteTutorial}
+              onClick={this.deleteBook}
             >
               Delete
             </button>
@@ -178,7 +178,7 @@ class Book extends Component {
             <button
               type="submit"
               className="badge badge-success"
-              onClick={this.updateTutorial}
+              onClick={this.updateBook}
             >
               Update
             </button>
