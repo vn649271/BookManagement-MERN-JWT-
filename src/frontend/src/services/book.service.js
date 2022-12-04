@@ -29,8 +29,12 @@ class BookManagementService {
     return http.put(`/books/${id}`, data);
   }
 
-  delete(id) {
-    return http.delete(`/books/${id}`);
+  delete(id, token) {
+    const config = {
+      headers: { "x-access-token": token },
+      "Content-type": "application/json",
+    };    
+    return http.post('/books/delete', { bookId: id }, config);
   }
 
   deleteAll() {

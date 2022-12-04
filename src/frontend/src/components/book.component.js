@@ -104,8 +104,11 @@ class Book extends Component {
   }
 
   deleteBook() {    
-    BookManagementService.delete(this.state.currentBook.id)
-      .then(response => {
+    BookManagementService.delete(
+      this.state.currentBook._id,
+      this.props.token
+    )
+    .then(response => {
         console.log(response.data);
         this.props.router.navigate('/books');
       })
