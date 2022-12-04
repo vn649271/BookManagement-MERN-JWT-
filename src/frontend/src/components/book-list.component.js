@@ -69,46 +69,46 @@ const BookList = props => {
           Remove All
         </button>
       </div>
+      <div className="col-md-6">
+        {currentIndex !== ""? (
+          <div>
+            <h4>Book</h4>
+            <div>
+              <label>
+                <strong>Title:</strong>
+              </label>{" "}
+              {books[currentIndex.replace("book_", "") - 0].title}
+            </div>
+            <div>
+              <label>
+                <strong>Description:</strong>
+              </label>{" "}
+              {books[currentIndex.replace("book_", "") - 0].description}
+            </div>
+            <div>
+              <label>
+                <strong>Status:</strong>
+              </label>{" "}
+              {books[currentIndex.replace("book_", "") - 0].published_at ? "Published" : "Pending"}
+            </div>
 
+            <Link
+              to={"/books/" + books[currentIndex.replace("book_", "") - 0].id}
+              className="badge badge-warning"
+            >
+              Edit
+            </Link>
+          </div>
+        ) : (
+          <div>
+            <br />
+            <p>Please click on a Book...</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-      // <div className="col-md-6">
-      //   {currentIndex !== ""? (
-      //     <div>
-      //       <h4>Book</h4>
-      //       <div>
-      //         <label>
-      //           <strong>Title:</strong>
-      //         </label>{" "}
-      //         {books[currentIndex.replace("book_", "") - 0].title}
-      //       </div>
-      //       <div>
-      //         <label>
-      //           <strong>Description:</strong>
-      //         </label>{" "}
-      //         {books[currentIndex.replace("book_", "") - 0].description}
-      //       </div>
-      //       <div>
-      //         <label>
-      //           <strong>Status:</strong>
-      //         </label>{" "}
-      //         {books[currentIndex.replace("book_", "") - 0].published_at ? "Published" : "Pending"}
-      //       </div>
 
-      //       <Link
-      //         to={"/books/" + books[currentIndex.replace("book_", "") - 0].id}
-      //         className="badge badge-warning"
-      //       >
-      //         Edit
-      //       </Link>
-      //     </div>
-      //   ) : (
-      //     <div>
-      //       <br />
-      //       <p>Please click on a Book...</p>
-      //     </div>
-      //   )}
-      // </div>
 export default BookList;
