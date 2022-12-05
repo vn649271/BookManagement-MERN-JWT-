@@ -24,7 +24,7 @@ export default function DeleteButton(props) {
 
   return (
     <div>
-    	<FaTrashAlt class="cursor-pointer" onClick={handleClickOpen} />
+    	<FaTrashAlt className="cursor-pointer" onClick={handleClickOpen} />
       <Dialog
         open={open}
         onClose={handleClose}

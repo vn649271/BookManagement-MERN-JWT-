@@ -90,7 +90,7 @@ const BookList = props => {
         <div className="col-md-12">
           <div className="row pr-3">
             <div className="col-md-9">
-              <h4>Book List</h4>
+              <h4 className="font-semibold">Book List</h4>
             </div>
             <div className="col-md-1">
               <h5>

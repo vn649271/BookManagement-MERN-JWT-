@@ -47,18 +47,12 @@ export default function BookTable(props) {
 						      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
 						    >
 						    	<TableCell style={{width: '100px'}} component="th" scope="row">{row.title}</TableCell>
-							    <TableCell className="book-description-col"><span>{row.description}</span></TableCell>
-							    <TableCell className="w-20 break-normal">{row.authorName}</TableCell>
+							    <TableCell className="max-w-sm truncate"><span>{row.description}</span></TableCell>
+							    <TableCell className="w-10 break-normal">{row.authorName}</TableCell>
 							    <TableCell align="center">{row.published_at.replace("T", " ").replace("Z", "").replace(/\.[0-9]+/, "")}</TableCell>
 							    <TableCell align="right">
-							    	<div className="row">
-							    		<div className="md-col-6 pr-2">
-								    		<FaPencilAlt className="cursor-pointer" onClick={() => onClickEdit(row)} />
-							    		</div>
-							    		<div className="md-col-6">
-									    	<DeleteButton className="cursor-pointer" onDelete={(ret) => onClickDelete(ret, row)} />
-							    		</div>
-							    	</div>
+									<FaPencilAlt className="cursor-pointer" onClick={() => onClickEdit(row)} />
+									<DeleteButton onDelete={(ret) => onClickDelete(ret, row)} />
 							    </TableCell>
 						    </TableRow>
 						))):
