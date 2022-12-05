@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import BookManagementService from "../services/book.service";
+import BookService from "../services/book.service";
 import { withRouter } from '../common/with-router';
 
 class Book extends Component {
@@ -50,9 +50,8 @@ class Book extends Component {
       }
     }));
   }
-
   getBook(bookId, token) {
-    BookManagementService.get(bookId, token)
+    BookService.get(bookId, token)
       .then(response => {
         this.setState({
           currentBook: response.data.books[0]
@@ -63,7 +62,6 @@ class Book extends Component {
         console.log(e);
       });
   }
-
   updatePublished(status) {
     var data = {
       id: this.state.currentBook.id,
@@ -72,7 +70,7 @@ class Book extends Component {
       published: status
     };
 
-    BookManagementService.update(this.state.currentBook.id, data)
+    BookService.update(this.state.currentBook.id, data)
       .then(response => {
         this.setState(prevState => ({
           currentBook: {
@@ -88,7 +86,7 @@ class Book extends Component {
   }
 
   updateBook() {
-    BookManagementService.update(
+    BookService.update(
       this.state.currentBook.id,
       this.state.currentBook
     )
@@ -104,7 +102,7 @@ class Book extends Component {
   }
 
   deleteBook() {    
-    BookManagementService.delete(
+    BookService.delete(
       this.state.currentBook._id,
       this.props.token
     )

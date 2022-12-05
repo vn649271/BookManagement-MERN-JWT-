@@ -624,3 +624,23 @@ video {
 .justify-center {
   justify-content: center;
 }
+
+.main-font {
+    font-family: Qualy-Light;
+}
+
+.font-16 {
+    font-size: 1.6rem;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.dark-bg {
+  background-color: #F3F3F3;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
