@@ -1,3 +1,7 @@
+# Summary
+
+This is book management system. The project uses MERN stack and JWT.
+
 # Build
 
 ## For backend
