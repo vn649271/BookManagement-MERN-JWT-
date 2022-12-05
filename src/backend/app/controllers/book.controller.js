@@ -42,7 +42,7 @@ exports.registerBook = (req, res) => {
                 title: req.body.title,
                 description: req.body.description,
                 author: req.userId,
-                published_at: now,
+                published_at: now.toISOString(),
             };
             Book.insertMany([book]).then((ret) => {
                 if (ret.length < 1) {
@@ -86,11 +86,23 @@ exports.getBooks = (req, res) => {
                     message: "No right to browse book list"
                 });
             }
+            // Get the books for creator or viewer
             if (user.roles === ROLES.CREATOR ||
                 user.roles === ROLES.VIEWER) {
                 filter = {
                     author: user.id
                 };
+            }
+            // Get the books according to the filter from client
+            if (req.query.old || req.query.new) {
+                let now = new Date();
+                let _10minAgo = new Date(now - 600);
+                if (req.query.old) {
+                    filter["published_at"] = { "$lt": _10minAgo.toISOString() };
+                } else {
+                    filter["published_at"] = { "$gte": _10minAgo.toISOString() };
+                }
+                console.log("*************** Filter the old books or new ones");
             }
             Book.find(filter).then((ret) => {
                 if (ret.length < 1) {

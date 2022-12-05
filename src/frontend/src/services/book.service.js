@@ -1,12 +1,28 @@
 import http from "../http-common";
 
-class BookManagementService {
+class BookService {
   getAll(token) {
     const config = {
       headers: { "x-access-token": token },
       "Content-type": "application/json",
     };    
     return http.get("/books", config);
+  }
+
+  getNew(token) {
+    const config = {
+      headers: { "x-access-token": token },
+      "Content-type": "application/json",
+    };    
+    return http.get("/books?new=1", config);
+  }
+
+  getOld(token) {
+    const config = {
+      headers: { "x-access-token": token },
+      "Content-type": "application/json",
+    };    
+    return http.get("/books?old=1", config);
   }
 
   get(id, token) {
@@ -46,4 +62,4 @@ class BookManagementService {
   }
 }
 
-export default new BookManagementService();
+export default new BookService();

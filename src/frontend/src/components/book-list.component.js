@@ -1,19 +1,49 @@
 import React, { useState, useEffect } from "react";
-import BookManagementService from "../services/book.service";
+import BookService from "../services/book.service";
 import { Link } from "react-router-dom";
 
 const BookList = props => {
   const { token } = props;
   const [books, setBooks] = useState([]);
+  const [loaded, setLoaded] = useState(false);
   const [currentIndex, setCurrentIndex] = useState("");
   const [currentClassName, setCurrentClassName] = useState("list-group-item");
 
   useEffect(() => {
     retrieveBooks();
-  }, [books]);
+  }, [loaded]);
 
   const retrieveBooks = () => {
-    BookManagementService.getAll(token)
+    BookService.getAll(token)
+      .then(response => {
+        if (response.data.error) {
+          alert("Failed to get book list");
+          return;
+        }
+        setBooks(response.data.books);
+        setLoaded(true);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+  const getNewBooks = () => {
+    console.log("************* New books");
+    BookService.getNew(token)
+      .then(response => {
+        if (response.data.error) {
+          alert("Failed to get book list");
+          return;
+        }
+        setBooks(response.data.books);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+  const getOldBooks = () => {
+    console.log("************* Old books");
+    BookService.getOld(token)
       .then(response => {
         if (response.data.error) {
           alert("Failed to get book list");
@@ -34,7 +64,7 @@ const BookList = props => {
     setCurrentIndex(ev.target.id);
   }
   const removeAllBooks = () => {
-    BookManagementService.deleteAll()
+    BookService.deleteAll()
       .then(response => {
         console.log(response.data);
         refreshList();
@@ -47,7 +77,41 @@ const BookList = props => {
   return (
     <div className="list row">
       <div className="col-md-6">
-        <h4>Book List</h4>
+        <div className="row pr-3">
+          <div className="col-md-6">
+            <h4>Book List</h4>
+          </div>
+          <div className="col-md-2">
+            <h5>
+              <button
+                className="border btn btn-sm"
+                onClick={refreshList}
+              >
+                All
+              </button>
+            </h5>
+          </div>
+          <div className="col-md-2">
+            <h5>
+              <button
+                className="border btn btn-sm"
+                onClick={getNewBooks}
+              >
+                New
+              </button>
+            </h5>
+          </div>
+          <div className="col-md-2">
+            <h5>
+              <button
+                className="border btn btn-sm"
+                onClick={getOldBooks}
+              >
+                Old
+              </button>
+            </h5>
+          </div>
+        </div>
         <ul className="list-group">
           {books &&
             books.map((book, index) => (
@@ -61,7 +125,6 @@ const BookList = props => {
               </li>
             ))}
         </ul>
-
         <button
           className="m-3 btn btn-sm btn-danger"
           onClick={removeAllBooks}
@@ -72,7 +135,7 @@ const BookList = props => {
       <div className="col-md-6">
         {currentIndex !== ""? (
           <div>
-            <h4>Book</h4>
+            <h4>Book Detail</h4>
             <div>
               <label>
                 <strong>Title:</strong>
