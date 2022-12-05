@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const dbConfig = require("./db.config");
 require('dotenv').config();
+const ROLES = require('./app/common');
+
 const PORT = process.env.PORT || 8085;
 
 const app = express();
@@ -44,7 +46,7 @@ function initial() {
         username: 'aa',
         password: 'aaaa',
         email: 'aa@aa.aa',
-        roles: 1
+        roles: ROLES.CREATOR
       }).save(err => {
         if (err) {
           console.log("error", err);
@@ -56,7 +58,7 @@ function initial() {
         username: 'bb',
         email: 'bb@bb.bb',
         password: 'bbbb',
-        roles: 2
+        roles: ROLES.VIEWER
       }).save(err => {
         if (err) {
           console.log("error", err);
@@ -68,7 +70,7 @@ function initial() {
         username: 'cc',
         email: 'cc@cc.cc',
         password: 'cccc',
-        roles: 3
+        roles: ROLES.VIEW_ALL
       }).save(err => {
         if (err) {
           console.log("error", err);

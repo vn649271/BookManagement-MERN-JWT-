@@ -1,7 +1,7 @@
 const db = require("../models");
 const {
     ROLES
-} = require('./common');
+} = require('../common');
 const User = db.user;
 const Role = db.role;
 const Book = db.book;

@@ -23,8 +23,8 @@ export default function BookTable(props) {
 				<TableHead>
 					<TableRow>
 						<TableCell>Title</TableCell>
-						<TableCell align="center">Description</TableCell>
-						<TableCell align="center">Author</TableCell>
+						<TableCell>Description</TableCell>
+						<TableCell>Author</TableCell>
 						<TableCell align="center">Published At</TableCell>
 						<TableCell align="right"></TableCell>
 					</TableRow>
@@ -38,8 +38,8 @@ export default function BookTable(props) {
 					      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
 					    >
 					    	<TableCell component="th" scope="row">{row.title}</TableCell>
-						    <TableCell align="right">{row.description}</TableCell>
-						    <TableCell align="right">{row.authorName}</TableCell>
+						    <TableCell>{row.description}</TableCell>
+						    <TableCell>{row.authorName}</TableCell>
 						    <TableCell align="center">{row.published_at.replace("T", " ").replace("Z", "").replace(/\.[0-9]+/, "")}</TableCell>
 						    <TableCell align="right">
 						    	<FaPencilAlt className="cursor-pointer" onClick={() => onClickEdit(row)} />
