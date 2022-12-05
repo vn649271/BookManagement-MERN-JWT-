@@ -96,13 +96,12 @@ exports.getBooks = (req, res) => {
             // Get the books according to the filter from client
             if (req.query.old || req.query.new) {
                 let now = new Date();
-                let _10minAgo = new Date(now - 600);
+                let _10minAgo = new Date(now - 600 * 1000);
                 if (req.query.old) {
                     filter["published_at"] = { "$lt": _10minAgo.toISOString() };
                 } else {
                     filter["published_at"] = { "$gte": _10minAgo.toISOString() };
                 }
-                console.log("*************** Filter the old books or new ones");
             }
             Book.find(filter).then((ret) => {
                 if (ret.length < 1) {
