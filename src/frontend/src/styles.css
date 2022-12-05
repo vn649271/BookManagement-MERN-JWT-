@@ -61,3 +61,7 @@ input[type="submit"]:hover {
   gap: 8px;
   margin: 10px;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
