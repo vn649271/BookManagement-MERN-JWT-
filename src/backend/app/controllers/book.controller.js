@@ -103,16 +103,30 @@ exports.getBooks = (req, res) => {
                     filter["published_at"] = { "$gte": _10minAgo.toISOString() };
                 }
             }
-            Book.find(filter).then((ret) => {
+            
+            Book.find(filter).then(async ret => {
                 if (ret.length < 1) {
                     return res.status(200).send({
                         error: 2,
                         message: "Failed to create book"
                     });
                 }
+                let bookList = [];
+                for (let i in ret) {
+                    bookList[i] = ret[i].toJSON();
+                    await User.findOne({_id: ret[i].author}).then(async user => {
+                        bookList[i]['authorName'] = user.username;
+                    });
+                }
                 res.status(200).send({
                     error: 0,
-                    books: ret
+                    books: bookList
+                });
+            }).catch(e => {
+                console.log(e)
+                res.status(200).send({
+                    error: 3,
+                    message: "Failed to get book list"
                 });
             });
         });

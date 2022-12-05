@@ -39,7 +39,7 @@ export default function BookTable(props) {
 					    >
 					    	<TableCell component="th" scope="row">{row.title}</TableCell>
 						    <TableCell align="right">{row.description}</TableCell>
-						    <TableCell align="right">{row.author}</TableCell>
+						    <TableCell align="right">{row.authorName}</TableCell>
 						    <TableCell align="center">{row.published_at}</TableCell>
 						    <TableCell align="right">
 						    	<FaPencilAlt className="cursor-pointer" onClick={() => onClickEdit(row)} />
